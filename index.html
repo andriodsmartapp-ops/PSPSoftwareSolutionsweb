@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PSG Software Solutions</title>
+  <link rel="stylesheet" href="./styles.css" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64'%3E%3Ctext y='50' font-size='50'%3E%E2%AD%90%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+  <canvas id="stars" aria-hidden="true"></canvas>
+
+  <header class="topbar">
+    <div class="container topbar__inner">
+      <a class="brand" href="#top">
+        <span class="brand__icon" aria-hidden="true">⭐</span>
+        <span class="brand__name">PSG</span>
+        <span class="brand__sub">Software Solutions</span>
+      </a>
+
+      <nav class="nav" aria-label="Primary">
+        <a class="nav__link" href="#home">Home</a>
+        <a class="nav__link" href="#services">Services</a>
+        <a class="nav__link" href="#ai">AI</a>
+        <a class="nav__link" href="#contact">Contact</a>
+      </nav>
+
+      <button class="navToggle" id="navToggle" aria-label="Toggle navigation" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <main id="top">
+    <!-- HERO / SERVICES -->
+    <section class="hero" id="home">
+      <div class="container hero__wrap">
+        <h1 class="hero__title">Our <span class="accent">Core Services</span></h1>
+        <p class="hero__subtitle">
+          Innovative, scalable, and intelligent technology solutions<br/>
+          designed to elevate your business.
+        </p>
+
+        <div class="serviceGrid" id="services" role="list">
+          <button class="glassCard serviceCard" role="listitem" type="button">
+            <div class="serviceCard__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M4 7h16v10H4V7Z" stroke="currentColor" stroke-width="1.7"/><path d="M8 11l-2 1.5L8 14" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M16 11l2 1.5L16 14" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M11 15l2-6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+            </div>
+            <div class="serviceCard__text">
+              <h3>Custom Software</h3>
+              <p>Tailored builds that fit your workflow.</p>
+            </div>
+          </button>
+
+          <button class="glassCard serviceCard" role="listitem" type="button">
+            <div class="serviceCard__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M8 4h8a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z" stroke="currentColor" stroke-width="1.7"/><path d="M10 7h4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M9 17h6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+            </div>
+            <div class="serviceCard__text">
+              <h3>Web &amp; Mobile Apps</h3>
+              <p>Fast, responsive experiences on any device.</p>
+            </div>
+          </button>
+
+          <button class="glassCard serviceCard" role="listitem" type="button">
+            <div class="serviceCard__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M7 18h10a4 4 0 0 0 .7-7.94A5 5 0 0 0 8.4 9.4 3.5 3.5 0 0 0 7 18Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M9 21v-3" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M15 21v-3" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+            </div>
+            <div class="serviceCard__text">
+              <h3>Cloud &amp; DevOps</h3>
+              <p>Reliable scaling, CI/CD, and automation.</p>
+            </div>
+          </button>
+
+          <button class="glassCard serviceCard" role="listitem" type="button">
+            <div class="serviceCard__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M12 3v3" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M21 12h-3" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M12 21v-3" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M6 12H3" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M16.95 7.05l-2.12 2.12" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M9.17 14.83l-2.12 2.12" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M16.95 16.95l-2.12-2.12" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M9.17 9.17 7.05 7.05" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><circle cx="12" cy="12" r="3.2" stroke="currentColor" stroke-width="1.7"/></svg>
+            </div>
+            <div class="serviceCard__text">
+              <h3>Digital Transformation</h3>
+              <p>Modernize systems and unlock efficiency.</p>
+            </div>
+          </button>
+
+          <button class="glassCard serviceCard" role="listitem" type="button">
+            <div class="serviceCard__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M12 2a7 7 0 0 0-4 12.74V18a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2v-3.26A7 7 0 0 0 12 2Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M9 22h6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M10 18h4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+            </div>
+            <div class="serviceCard__text">
+              <h3>IT Consulting</h3>
+              <p>Strategy, architecture, and delivery support.</p>
+            </div>
+          </button>
+        </div>
+
+        <div class="migration">
+          <div class="migration__wrap glassPanel" id="tiltCard" aria-label="Migration showcase">
+            <div class="migration__glow" aria-hidden="true"></div>
+
+            
+<div class="corner-3d top-left"></div>
+<div class="corner-3d top-right"></div>
+<div class="corner-3d bottom-left"></div>
+<div class="corner-3d bottom-right"></div>
+
+            <div class="migration__media">
+              <img src="./assets/migration.png" alt="Migration graphic" />
+            </div>
+
+            <!-- Floating icon pills (animated) -->
+            <div class="floatPills" aria-hidden="true">
+              <div class="pill pill--a">
+                <span class="pill__icon">🔔</span>
+                <span class="pill__text">Push Notifications</span>
+              </div>
+              <div class="pill pill--b">
+                <span class="pill__icon">🗺️</span>
+                <span class="pill__text">GPS &amp; Maps</span>
+              </div>
+              <div class="pill pill--c">
+                <span class="pill__icon">🔗</span>
+                <span class="pill__text">Easy Backlinks</span>
+              </div>
+              <div class="pill pill--d">
+                <span class="pill__icon">📈</span>
+                <span class="pill__text">SEO Optimization</span>
+              </div>
+            </div>
+
+            <div class="migration__caption">
+              <span class="hintDot"></span>
+              3D tilt + floating features (demo). Replace labels or link to your migration offering.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- AI SOLUTIONS -->
+    <section class="ai" id="ai">
+      <div class="container">
+        <h2 class="sectionTitle">AI-Powered Solutions</h2>
+
+        <div class="aiGrid" role="list">
+          <article class="glassCard aiCard" role="listitem">
+            <div class="aiCard__top">
+              <div class="aiCard__icon" aria-hidden="true">🤖</div>
+              <h3>AI Chatbots</h3>
+            </div>
+            <p>Conversational AI assistants for customer support and engagement.</p>
+          </article>
+
+          <article class="glassCard aiCard" role="listitem">
+            <div class="aiCard__top">
+              <div class="aiCard__icon" aria-hidden="true">📊</div>
+              <h3>Predictive Analytics</h3>
+            </div>
+            <p>Data-driven forecasting and business insights.</p>
+          </article>
+
+          <article class="glassCard aiCard" role="listitem">
+            <div class="aiCard__top">
+              <div class="aiCard__icon" aria-hidden="true">🧠</div>
+              <h3>AI Automation</h3>
+            </div>
+            <p>Automate repetitive tasks with AI intelligence.</p>
+          </article>
+
+          <article class="glassCard aiCard" role="listitem">
+            <div class="aiCard__top">
+              <div class="aiCard__icon" aria-hidden="true">🛡️</div>
+              <h3>AI Security</h3>
+            </div>
+            <p>Smart threat detection and cybersecurity intelligence.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section class="contact" id="contact">
+      <div class="container">
+        <h2 class="sectionTitle">Contact Us</h2>
+
+        <form class="glassPanel contactForm" id="contactForm">
+          <label class="field">
+            <span>Your Name</span>
+            <input name="name" autocomplete="name" placeholder="Your Name" required />
+          </label>
+
+          <label class="field">
+            <span>Your Email</span>
+            <input name="email" type="email" autocomplete="email" placeholder="Your Email" required />
+          </label>
+
+          <label class="field">
+            <span>Your Message</span>
+            <textarea name="message" rows="5" placeholder="Your Message" required></textarea>
+          </label>
+
+          <button class="btnPrimary" type="submit">Send Message</button>
+
+          <p class="formNote" id="formNote" role="status" aria-live="polite"></p>
+        </form>
+
+        <footer class="footer">
+          <small>© 2026 PSG Software Solutions. All Rights Reserved.</small>
+        </footer>
+      </div>
+    </section>
+  </main>
+
+  <!-- SUPPORT BOT -->
+  <div class="chatLauncher" id="chatLauncher" aria-label="Open support chat" role="button" tabindex="0">
+    <span aria-hidden="true">🤖</span>
+  </div>
+
+  <aside class="chatWidget" id="chatWidget" aria-hidden="true">
+    <div class="chatWidget__header">
+      <div class="chatWidget__title">
+        <span class="chatWidget__dot" aria-hidden="true"></span>
+        <span>Support Bot</span>
+      </div>
+      <button class="chatWidget__close" id="chatClose" aria-label="Close chat">✕</button>
+    </div>
+
+    <div class="chatWidget__body" id="chatBody" role="log" aria-live="polite" aria-relevant="additions">
+      <div class="chatMsg chatMsg--bot">
+        <div class="bubble">Hello! How can I help you today?</div>
+      </div>
+    </div>
+
+    <form class="chatWidget__input" id="chatForm">
+      <input id="chatInput" type="text" placeholder="Type a message…" autocomplete="off" />
+      <button type="submit">Send</button>
+    </form>
+  </aside>
+
+  <script src="./script.js"></script>
+</body>
+</html>
