@@ -240,3 +240,161 @@
     auto();
   }
 })();
+
+
+  // ----- Web-to-Mobile Builder (demo) -----
+  const stepTabs = Array.from(document.querySelectorAll(".stepTab"));
+  const panes = Array.from(document.querySelectorAll(".stepPane"));
+  const urlInput = document.getElementById("builderUrl");
+  const iframe = document.getElementById("sitePreview");
+  const overlay = document.getElementById("previewOverlay");
+  const note = document.getElementById("iframeNote");
+  const featCount = document.getElementById("featCount");
+  const pkgNameEl = document.getElementById("pkgName");
+  const statusEl = document.getElementById("buildStatus");
+  const prog = document.getElementById("buildProgress");
+  const btnPreview = document.getElementById("btnPreview");
+  const btnNext1 = document.getElementById("btnNext1");
+  const btnNext2 = document.getElementById("btnNext2");
+  const btnBack2 = document.getElementById("btnBack2");
+  const btnBack3 = document.getElementById("btnBack3");
+  const btnBuild = document.getElementById("btnBuild");
+  const btnDownloadCfg = document.getElementById("btnDownloadConfig");
+  const btnDownloadApk = document.getElementById("btnDownloadApk");
+
+  function setStep(n){
+    stepTabs.forEach(t => t.classList.toggle("is-active", t.dataset.step === String(n)));
+    panes.forEach(p => p.classList.toggle("is-active", p.dataset.step === String(n)));
+  }
+  stepTabs.forEach(t => t.addEventListener("click", () => setStep(t.dataset.step)));
+
+  function normalizeUrl(u){
+    const s = (u || "").trim();
+    if(!s) return "";
+    if(/^https?:\/\//i.test(s)) return s;
+    return "https://" + s;
+  }
+
+  function selectedFeatures(){
+    return Array.from(document.querySelectorAll('.checkItem input[type="checkbox"]:checked')).map(i => i.value);
+  }
+
+  function refreshFeatureCount(){
+    const n = selectedFeatures().length;
+    if(featCount) featCount.textContent = `${n} selected`;
+  }
+  document.querySelectorAll('.checkItem input[type="checkbox"]').forEach(i => i.addEventListener("change", refreshFeatureCount));
+  refreshFeatureCount();
+
+  function preview(){
+    const u = normalizeUrl(urlInput?.value);
+    if(!u){
+      if(note) note.textContent = "Please enter a valid URL.";
+      return;
+    }
+    if(note) note.textContent = "Loading preview…";
+    if(overlay) overlay.style.display = "none";
+    if(iframe) iframe.src = u;
+
+    setTimeout(() => {
+      try{
+        // Access may throw if blocked
+        iframe?.contentWindow?.location?.href;
+        if(note) note.textContent = "Preview loaded. If it stays blank, the site may block embedding.";
+      }catch(e){
+        if(overlay) overlay.style.display = "grid";
+        if(note) note.textContent = "This site may block embedding (X-Frame-Options). Preview might not render here.";
+      }
+    }, 800);
+  }
+
+  btnPreview?.addEventListener("click", preview);
+  btnNext1?.addEventListener("click", () => { preview(); setStep(2); });
+  btnBack2?.addEventListener("click", () => setStep(1));
+  btnNext2?.addEventListener("click", () => setStep(3));
+  btnBack3?.addEventListener("click", () => setStep(2));
+
+  function makePackageName(u){
+    try{
+      const host = new URL(u).hostname.replace(/^www\./,'').toLowerCase();
+      const parts = host.split('.').filter(Boolean);
+      const core = parts.slice(0, -1).join('.') || parts[0] || "startup";
+      const safe = core.replace(/[^a-z0-9.]/g,'');
+      return `com.psg.${safe.replace(/\.+/g,'.')}.app`;
+    }catch{
+      return "com.psg.startup.app";
+    }
+  }
+
+  let lastBuildConfig = null;
+
+  function downloadText(filename, text, mime="text/plain"){
+    const blob = new Blob([text], { type: mime });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => {
+      URL.revokeObjectURL(a.href);
+      a.remove();
+    }, 0);
+  }
+
+  btnBuild?.addEventListener("click", async () => {
+    const u = normalizeUrl(urlInput?.value);
+    if(!u){
+      if(note) note.textContent = "Please enter a URL first.";
+      setStep(1);
+      return;
+    }
+
+    const feats = selectedFeatures();
+    const pkg = makePackageName(u);
+    if(pkgNameEl) pkgNameEl.textContent = pkg;
+
+    if(statusEl) statusEl.textContent = "Building (demo)…";
+    if(btnBuild) btnBuild.disabled = true;
+    if(btnDownloadCfg) btnDownloadCfg.disabled = true;
+    if(btnDownloadApk) btnDownloadApk.disabled = true;
+
+    if(prog) prog.style.width = "0%";
+    for(let i=1;i<=10;i++){
+      await new Promise(r => setTimeout(r, 180));
+      if(prog) prog.style.width = `${i*10}%`;
+    }
+
+    const buildId = Math.random().toString(16).slice(2,10);
+    lastBuildConfig = {
+      buildId,
+      createdAt: new Date().toISOString(),
+      url: u,
+      packageName: pkg,
+      features: feats,
+      notes: "Demo config generated from landing page builder. For a real signed APK/AAB, PSG will run CI/CD and deliver artifacts."
+    };
+
+    if(statusEl) statusEl.textContent = "Build ready (demo)";
+    if(btnBuild) btnBuild.disabled = false;
+    if(btnDownloadCfg) btnDownloadCfg.disabled = false;
+    if(btnDownloadApk) btnDownloadApk.disabled = false;
+
+    if(typeof addToast === "function") addToast("Build ready (demo)");
+  });
+
+  btnDownloadCfg?.addEventListener("click", () => {
+    if(!lastBuildConfig){
+      if(typeof addToast === "function") addToast("Build first");
+      return;
+    }
+    downloadText("psg-web2mobile-config.json", JSON.stringify(lastBuildConfig, null, 2), "application/json");
+  });
+
+  btnDownloadApk?.addEventListener("click", () => {
+    if(!lastBuildConfig){
+      if(typeof addToast === "function") addToast("Build first");
+      return;
+    }
+    const apkNote = `PSG DEMO APK (PLACEHOLDER)\n\nBuild ID: ${lastBuildConfig.buildId}\nURL: ${lastBuildConfig.url}\nPackage: ${lastBuildConfig.packageName}\nFeatures: ${lastBuildConfig.features.join(", ")}\n\nThis file is a placeholder created by the website demo.\nFor a real signed APK/AAB, contact PSG at +91 8266 7922 or gangadharpola9182@gmail.com.`;
+    downloadText("psg-demo.apk", apkNote, "application/octet-stream");
+  });

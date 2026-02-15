@@ -5,6 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>PSG Software Solutions</title>
   <meta name="description" content="PSG Software Solutions builds scalable software, cloud, and AI-powered products for modern businesses." />
+  <meta name="keywords" content="software development, web development, mobile app development, cloud devops, AI solutions, SaaS development, IT consulting, system integration, cybersecurity, automation, data analytics, digital transformation" />
+  <meta name="author" content="PSG Software Solutions" />
+  <link rel="canonical" href="/" />
+  <meta name="robots" content="index,follow" />
+  <meta name="theme-color" content="#0b1140" />
+  <meta property="og:site_name" content="PSG Software Solutions" />
+  <meta property="og:image" content="./assets/migration.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="PSG Software Solutions" />
+  <meta name="twitter:description" content="Custom software, cloud & DevOps, and AI-powered solutions to elevate your business." />
+  <meta name="twitter:image" content="./assets/migration.png" />
   <meta property="og:title" content="PSG Software Solutions" />
   <meta property="og:description" content="Custom software, cloud & DevOps, and AI-powered solutions to elevate your business." />
   <meta property="og:type" content="website" />
@@ -27,6 +38,7 @@
         <a class="nav__link" href="#home">Home</a>
         <a class="nav__link" href="#services">Services</a>
         <a class="nav__link" href="#ai">AI</a>
+        <a class="nav__link" href="#builder">Web-to-Mobile</a>
         <a class="nav__link" href="#about">About</a>
         <a class="nav__link" href="#contact">Contact</a>
       </nav>
@@ -47,7 +59,8 @@
           designed to elevate your business.
         </p>
 
-      
+     
+
         <div class="trustStrip" aria-label="Trust strip">
           <span class="trustStrip__label">Enterprise-ready:</span>
           <span class="trustPill">SLA Options</span>
@@ -138,7 +151,7 @@
 
             <div class="migration__caption">
               <span class="hintDot"></span>
-        
+             
             </div>
           </div>
         </div>
@@ -188,6 +201,129 @@
 
 
     
+
+    <!-- WEB TO MOBILE BUILDER -->
+    <section class="builder" id="builder">
+      <div class="container">
+        <div class="sectionHead">
+          <h2 class="sectionTitle">Web App to Mobile</h2>
+          <p class="sectionLead">
+            Startup-friendly flow to package your web app into an installable mobile app. This on-page builder is a
+            <strong>demo</strong> for collecting requirements and generating a build request + preview.
+          </p>
+        </div>
+
+        <div class="builderGrid">
+          <div class="glassPanel builderCard">
+            <div class="builderSteps" aria-label="Builder steps">
+              <button class="stepTab is-active" data-step="1" type="button">
+                <span class="stepTab__num">1</span> URL
+              </button>
+              <button class="stepTab" data-step="2" type="button">
+                <span class="stepTab__num">2</span> Features
+              </button>
+              <button class="stepTab" data-step="3" type="button">
+                <span class="stepTab__num">3</span> Build
+              </button>
+            </div>
+
+            <div class="stepPane is-active" data-step="1">
+              <h3>Customer-level URL</h3>
+              <p class="mutedSmall">Enter the URL you want to wrap (example: https://yourapp.com).</p>
+              <label class="field">
+                <span>Website URL</span>
+                <input id="builderUrl" placeholder="https://example.com" inputmode="url" />
+              </label>
+
+              <div class="builderActions">
+                <button class="btnPrimary btnPrimary--wide" id="btnPreview" type="button">Preview</button>
+                <button class="btnSecondary" id="btnNext1" type="button">Next</button>
+              </div>
+
+              <p class="tinyNote" id="iframeNote" aria-live="polite"></p>
+            </div>
+
+            <div class="stepPane" data-step="2">
+              <h3>Feature checklist</h3>
+              <p class="mutedSmall">Select what your app needs. We use this to estimate and prepare the build plan.</p>
+
+              <div class="checkGrid" role="list">
+                <label class="checkItem" role="listitem"><input type="checkbox" value="Push Notifications" checked /> Push Notifications</label>
+                <label class="checkItem" role="listitem"><input type="checkbox" value="GPS & Location" checked /> GPS & Location</label>
+                <label class="checkItem" role="listitem"><input type="checkbox" value="Camera / Uploads" /> Camera / Uploads</label>
+                <label class="checkItem" role="listitem"><input type="checkbox" value="Payments" /> Payments</label>
+                <label class="checkItem" role="listitem"><input type="checkbox" value="Offline Mode" /> Offline Mode</label>
+                <label class="checkItem" role="listitem"><input type="checkbox" value="Deep Links" checked /> Deep Links</label>
+                <label class="checkItem" role="listitem"><input type="checkbox" value="Analytics" checked /> Analytics</label>
+                <label class="checkItem" role="listitem"><input type="checkbox" value="Biometric Login" /> Biometric Login</label>
+              </div>
+
+              <div class="builderActions">
+                <button class="btnSecondary" id="btnBack2" type="button">Back</button>
+                <button class="btnPrimary btnPrimary--wide" id="btnNext2" type="button">Next</button>
+              </div>
+            </div>
+
+            <div class="stepPane" data-step="3">
+              <h3>Build & Downloads</h3>
+              <p class="mutedSmall">
+                Click <strong>Build</strong> to generate a build request file and a demo APK download (placeholder).
+                For real APK/Play Store builds, we’ll run CI/CD and deliver signed artifacts.
+              </p>
+
+              <div class="buildBox">
+                <div class="buildRow">
+                  <div class="buildLabel">Package name</div>
+                  <div class="buildValue" id="pkgName">com.psg.startup.app</div>
+                </div>
+                <div class="buildRow">
+                  <div class="buildLabel">Status</div>
+                  <div class="buildValue" id="buildStatus">Ready</div>
+                </div>
+                <div class="progressBar" aria-hidden="true"><span id="buildProgress"></span></div>
+              </div>
+
+              <div class="builderActions">
+                <button class="btnSecondary" id="btnBack3" type="button">Back</button>
+                <button class="btnPrimary btnPrimary--wide" id="btnBuild" type="button">Build</button>
+                <button class="btnSecondary" id="btnDownloadConfig" type="button" disabled>Download Config</button>
+                <button class="btnSecondary" id="btnDownloadApk" type="button" disabled>Download APK</button>
+              </div>
+
+              <div class="glassPanel buildHint">
+                <strong>Tip:</strong> If you want us to deliver a real APK quickly, submit this build request and we’ll
+                reply with timeline + Play Store guidance.
+              </div>
+            </div>
+          </div>
+
+          <div class="glassPanel previewCard">
+            <div class="previewHead">
+              <div>
+                <div class="previewKicker">Preview</div>
+                <div class="previewTitle">Mobile Frame</div>
+              </div>
+              <div class="previewPills" aria-label="Selected features">
+                <span class="pillTag" id="featCount">0 selected</span>
+              </div>
+            </div>
+
+            <div class="phoneFrame">
+              <div class="phoneNotch" aria-hidden="true"></div>
+              <iframe id="sitePreview" title="Web app preview" sandbox="allow-scripts allow-forms allow-same-origin allow-popups"></iframe>
+              <div class="previewOverlay" id="previewOverlay" aria-hidden="true">
+                Preview loads here. Some sites block embedding (X-Frame-Options).
+              </div>
+            </div>
+
+            <div class="previewFooter">
+              <div class="mutedSmall"><strong>Startup note:</strong> We can ship an MVP wrapper in days, then iterate features.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- ABOUT -->
     <section class="about" id="about">
       <div class="container">
@@ -392,6 +528,21 @@
       <div class="container">
         <h2 class="sectionTitle">Contact Us</h2>
 
+        <div class="contactStrip glassPanel contactStrip" aria-label="Direct contact">
+          <div class="contactStrip__item">
+            <div class="contactStrip__label">Phone</div>
+            <a class="contactStrip__value" href="tel:+9182667922">+91 8266 7922</a>
+          </div>
+          <div class="contactStrip__item">
+            <div class="contactStrip__label">Email</div>
+            <a class="contactStrip__value" href="mailto:gangadharpola9182@gmail.com">gangadharpola9182@gmail.com</a>
+          </div>
+          <div class="contactStrip__item">
+            <div class="contactStrip__label">Response</div>
+            <div class="contactStrip__value">Same-day for startups</div>
+          </div>
+        </div>
+
         <form class="glassPanel contactForm" id="contactForm">
           <label class="field">
             <span>Your Name</span>
@@ -414,7 +565,7 @@
         </form>
 
         <footer class="footer">
-          <small>© 2026 PSG Software Solutions. All Rights Reserved.</small>
+          <small>© 2026 PSG Software Solutions. All Rights Reserved. • +91 8266 7922 • gangadharpola9182@gmail.com</small>
         </footer>
       </div>
     </section>

@@ -35,3 +35,18 @@ python -m http.server 8000
 ## Notes
 - Replace the migration image at `assets/migration.png`.
 - Text and services are in `index.html` under the About section.
+
+
+## Web App to Mobile (demo builder)
+The page includes a **Web-to-Mobile** demo wizard that:
+- captures a customer URL
+- selects feature checkboxes
+- generates a build request JSON
+- provides a placeholder APK download
+
+For a real signed Android **APK/AAB**, connect it to a build pipeline (Capacitor/Cordova/Flutter wrapper, or native).
+This demo is mainly for requirement capture and preview.
+
+## Contact
+- Phone: +91 8266 7922
+- Email: gangadharpola9182@gmail.com
