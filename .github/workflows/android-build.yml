@@ -1,0 +1,118 @@
+name: Build Android (Capacitor)
+
+on:
+  workflow_dispatch:
+    inputs:
+      config_json:
+        description: "Build config JSON (string)"
+        required: true
+        type: string
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: "temurin"
+          java-version: "17"
+
+      - name: Write build config
+        working-directory: psg-website/android-build
+        run: |
+          echo '${{ inputs.config_json }}' > build-config.json
+
+      - name: Init Capacitor project
+        working-directory: psg-website/android-build
+        run: |
+          npm run init -- build-config.json
+
+      - name: Decode keystore (required for signed release)
+        working-directory: psg-website/android-build/android/app
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+        run: |
+          if [ -z "$ANDROID_KEYSTORE_BASE64" ]; then
+            echo "Missing ANDROID_KEYSTORE_BASE64 secret"; exit 1;
+          fi
+          echo "$ANDROID_KEYSTORE_BASE64" | base64 -d > release.keystore
+
+      - name: Configure signing
+        working-directory: psg-website/android-build/android
+        env:
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          cat >> gradle.properties <<EOF
+          MYAPP_UPLOAD_STORE_FILE=app/release.keystore
+          MYAPP_UPLOAD_STORE_PASSWORD=$ANDROID_KEYSTORE_PASSWORD
+          MYAPP_UPLOAD_KEY_ALIAS=$ANDROID_KEY_ALIAS
+          MYAPP_UPLOAD_KEY_PASSWORD=$ANDROID_KEY_PASSWORD
+          EOF
+
+      - name: Patch build.gradle for signing
+        working-directory: psg-website/android-build/android/app
+        run: |
+          perl -0777 -i -pe 's/signingConfigs\s*\{[\s\S]*?\}/signingConfigs {\n        release {\n            if (project.hasProperty("MYAPP_UPLOAD_STORE_FILE")) {\n                storeFile file(MYAPP_UPLOAD_STORE_FILE)\n                storePassword MYAPP_UPLOAD_STORE_PASSWORD\n                keyAlias MYAPP_UPLOAD_KEY_ALIAS\n                keyPassword MYAPP_UPLOAD_KEY_PASSWORD\n            }\n        }\n    }/m' build.gradle
+          perl -0777 -i -pe 's/buildTypes\s*\{[\s\S]*?\}/buildTypes {\n        release {\n            minifyEnabled false\n            signingConfig signingConfigs.release\n        }\n    }/m' build.gradle
+
+      - name: Build APK
+        working-directory: psg-website/android-build
+        run: npm run build:apk
+
+      - name: Build AAB
+        working-directory: psg-website/android-build
+        run: npm run build:aab
+
+      - name: Upload to Azure Blob (for automatic download)
+        working-directory: psg-website/android-build
+        env:
+          AZURE_STORAGE_CONNECTION_STRING: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}
+          APK_ARTIFACTS_CONTAINER: apk-artifacts
+          APK_RESULTS_CONTAINER: apk-results
+        run: |
+          if [ -z "$AZURE_STORAGE_CONNECTION_STRING" ]; then
+            echo "Missing AZURE_STORAGE_CONNECTION_STRING secret (skipping blob upload)"
+            exit 0
+          fi
+
+          BUILD_ID=$(cat build-config.json | jq -r '.buildId // empty')
+          if [ -z "$BUILD_ID" ]; then BUILD_ID=$(date +%s); fi
+
+          APK_PATH="android/app/build/outputs/apk/release/app-release.apk"
+          AAB_PATH="android/app/build/outputs/bundle/release/app-release.aab"
+
+          echo "Uploading artifacts for buildId=$BUILD_ID"
+
+          az storage blob upload --connection-string "$AZURE_STORAGE_CONNECTION_STRING"             --container-name "$APK_ARTIFACTS_CONTAINER" --file "$APK_PATH" --name "$BUILD_ID/app-release.apk" --overwrite true
+
+          az storage blob upload --connection-string "$AZURE_STORAGE_CONNECTION_STRING"             --container-name "$APK_ARTIFACTS_CONTAINER" --file "$AAB_PATH" --name "$BUILD_ID/app-release.aab" --overwrite true
+
+          cat > result.json <<EOF
+          {
+            "buildId": "$BUILD_ID",
+            "apkBlob": "$BUILD_ID/app-release.apk",
+            "aabBlob": "$BUILD_ID/app-release.aab",
+            "createdAt": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
+          }
+          EOF
+
+          az storage blob upload --connection-string "$AZURE_STORAGE_CONNECTION_STRING"             --container-name "$APK_RESULTS_CONTAINER" --file "result.json" --name "$BUILD_ID.json" --overwrite true
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-artifacts
+          path: |
+            psg-website/android-build/android/app/build/outputs/apk/release/*.apk
+            psg-website/android-build/android/app/build/outputs/bundle/release/*.aab

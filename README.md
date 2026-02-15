@@ -50,3 +50,59 @@ This demo is mainly for requirement capture and preview.
 ## Contact
 - Phone: +91 8266 7922
 - Email: gangadharpola9182@gmail.com
+
+
+## Android build pipeline (REAL APK/AAB) — Capacitor + GitHub Actions
+The website builder collects a config. To generate a **real installable** APK/AAB you must build and sign it.
+
+### 1) Generate a build config
+Use the Web-to-Mobile builder on the site → **Build** → **Download Config**.
+
+### 2) Run locally (Android Studio)
+From `psg-website/android-build`:
+```bash
+npm run init -- build-config.json
+# then open android/ in Android Studio and build Release, or:
+npm run build:apk
+npm run build:aab
+```
+
+### 3) CI build (GitHub Actions)
+Workflow: `.github/workflows/android-build.yml` (workflow_dispatch)
+
+You must add these repo secrets (Settings → Secrets and variables → Actions):
+- `ANDROID_KEYSTORE_BASE64` (base64 of your `.jks`/`.keystore`)
+- `ANDROID_KEYSTORE_PASSWORD`
+- `ANDROID_KEY_ALIAS`
+- `ANDROID_KEY_PASSWORD`
+
+Trigger the workflow manually and paste the config JSON into the input.
+
+### About iframe preview limitations
+Some websites send `X-Frame-Options` or `CSP frame-ancestors` headers that **block iframes**.  
+When blocked, use **Open URL** to test in your normal browser.
+
+### About installing APK on mobile
+You can only install a **real signed APK** built via the pipeline above. The “demo APK” on the landing page is not a real Android package.
+
+
+## Fully automatic “Download Real APK”
+This project supports **automatic APK download** after CI build by uploading artifacts to **Azure Blob Storage** and returning a
+short-lived **SAS URL** via `/api/build-status`.
+
+### Create Azure Storage containers
+Create these containers (private is recommended):
+- `apk-artifacts`
+- `apk-results`
+
+### GitHub Secrets (CI upload)
+Add:
+- `AZURE_STORAGE_CONNECTION_STRING`
+
+### Azure Static Web App Configuration (API generates SAS)
+Set:
+- `AZURE_STORAGE_CONNECTION_STRING`
+- `APK_ARTIFACTS_CONTAINER=apk-artifacts`
+- `APK_RESULTS_CONTAINER=apk-results`
+
+Then your website will show **Download Real APK** and it will download the signed release APK automatically.

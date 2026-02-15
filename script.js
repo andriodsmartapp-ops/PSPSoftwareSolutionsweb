@@ -1,3 +1,10 @@
+// PWA: register service worker for better mobile experience
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./service-worker.js").catch(() => {});
+  });
+}
+
 /* Stars background, mobile nav, fake form submit, support bot, and 3D tilt animation. */
 (() => {
   // ----- Stars canvas -----
@@ -303,7 +310,7 @@
         if(note) note.textContent = "Preview loaded. If it stays blank, the site may block embedding.";
       }catch(e){
         if(overlay) overlay.style.display = "grid";
-        if(note) note.textContent = "This site may block embedding (X-Frame-Options). Preview might not render here.";
+        if(note) note.textContent = "Preview blocked by the website (X-Frame-Options). Use Open URL to test in your browser.";
       }
     }, 800);
   }
@@ -328,17 +335,24 @@
 
   let lastBuildConfig = null;
 
-  function downloadText(filename, text, mime="text/plain"){
-    const blob = new Blob([text], { type: mime });
+  function downloadText(filename, data, mime="application/octet-stream"){
+    const blob = data instanceof Blob ? data : new Blob([data], { type: mime });
+    const url = URL.createObjectURL(blob);
+
     const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
+    a.href = url;
     a.download = filename;
+    a.rel = "noopener";
+    a.style.display = "none";
     document.body.appendChild(a);
-    a.click();
+
+    // Mobile Chrome can be picky; dispatch a real click event
+    a.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true, view: window }));
+
     setTimeout(() => {
-      URL.revokeObjectURL(a.href);
+      URL.revokeObjectURL(url);
       a.remove();
-    }, 0);
+    }, 1500);
   }
 
   btnBuild?.addEventListener("click", async () => {
@@ -396,5 +410,102 @@
       return;
     }
     const apkNote = `PSG DEMO APK (PLACEHOLDER)\n\nBuild ID: ${lastBuildConfig.buildId}\nURL: ${lastBuildConfig.url}\nPackage: ${lastBuildConfig.packageName}\nFeatures: ${lastBuildConfig.features.join(", ")}\n\nThis file is a placeholder created by the website demo.\nFor a real signed APK/AAB, contact PSG at +91 8266 7922 or gangadharpola9182@gmail.com.`;
-    downloadText("psg-demo.apk", apkNote, "application/octet-stream");
+    downloadText("psg-demo.apk", apkNote, "application/vnd.android.package-archive");
+  });
+
+
+  // Extra: open preview URL in new tab (recommended when X-Frame-Options blocks iframe preview)
+  const btnOpenUrl = document.getElementById("btnOpenUrl");
+  btnOpenUrl?.addEventListener("click", () => {
+    const u = normalizeUrl(urlInput?.value);
+    if(!u){
+      if(note) note.textContent = "Please enter a URL first.";
+      return;
+    }
+    window.open(u, "_blank", "noopener,noreferrer");
+    if(typeof addToast === "function") addToast("Opened URL in new tab");
+  });
+
+
+
+  // ----- Real build + automatic download (SWA backend) -----
+  let currentBuildId = null;
+  const realStatus = document.getElementById("realBuildStatus");
+
+  async function triggerRealBuild(cfg){
+    const r = await fetch("/api/trigger-build", { method:"POST", headers:{ "Content-Type":"application/json" }, body: JSON.stringify(cfg) });
+    if(!r.ok) throw new Error(await r.text());
+    return await r.json();
+  }
+
+  async function pollBuild(buildId){
+    const r = await fetch(`/api/build-status?buildId=${encodeURIComponent(buildId)}`);
+    if(!r.ok) throw new Error(await r.text());
+    return await r.json();
+  }
+
+  // Hook Build button: trigger backend
+  btnBuild?.addEventListener("click", async () => {
+    const u = normalizeUrl(urlInput?.value);
+    if(!u){ if(note) note.textContent = "Please enter a URL first."; setStep(1); return; }
+
+    const feats = selectedFeatures();
+    const pkg = makePackageName(u);
+    if(pkgNameEl) pkgNameEl.textContent = pkg;
+
+    lastBuildConfig = { createdAt: new Date().toISOString(), url: u, packageName: pkg, appName: "PSG Web2Mobile", features: feats };
+
+    btnBuild.disabled = true;
+    btnDownloadCfg.disabled = true;
+    btnDownloadApk.disabled = true;
+    if(statusEl) statusEl.textContent = "Triggering CI…";
+    if(realStatus) realStatus.textContent = "";
+
+    try{
+      const resp = await triggerRealBuild(lastBuildConfig);
+      currentBuildId = resp.buildId;
+      if(realStatus) realStatus.textContent = `Build started • ID: ${currentBuildId}`;
+
+      // poll until done or download available
+      for(let i=0;i<60;i++){
+        await new Promise(r => setTimeout(r, 2000));
+        const st = await pollBuild(currentBuildId);
+        if(st.apkUrl){
+          if(statusEl) statusEl.textContent = "Build complete • Download ready";
+          if(realStatus) realStatus.textContent = "Build complete • Download ready";
+          btnDownloadCfg.disabled = false;
+          btnDownloadApk.disabled = false;
+          return;
+        }
+        if(st.runUrl && realStatus) realStatus.textContent = `Building… • Run: ${st.runUrl}`;
+        if(st.status === "completed"){
+          if(statusEl) statusEl.textContent = `Build completed • ${st.conclusion || "unknown"}`;
+          btnDownloadCfg.disabled = false;
+          return;
+        }
+      }
+      if(realStatus) realStatus.textContent = "Still building… please retry shortly.";
+    }catch(e){
+      if(statusEl) statusEl.textContent = "Build trigger failed";
+      if(realStatus) realStatus.textContent = String(e);
+      btnDownloadCfg.disabled = false;
+    } finally {
+      btnBuild.disabled = false;
+    }
+  }, { once: true });
+
+  // Download real APK automatically (from SAS link)
+  btnDownloadApk?.addEventListener("click", async () => {
+    if(!currentBuildId){ alert("Build not started yet."); return; }
+    try{
+      const st = await pollBuild(currentBuildId);
+      if(st.apkUrl){
+        window.location.href = st.apkUrl;
+        if(typeof addToast === "function") addToast("Downloading APK…");
+        return;
+      }
+      alert("APK not ready yet. Please wait.");
+    }catch(e){
+      alert("Could not get download link: " + String(e));
+    }
   });

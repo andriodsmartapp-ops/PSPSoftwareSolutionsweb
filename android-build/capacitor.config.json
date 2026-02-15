@@ -1,0 +1,8 @@
+{
+  "appId": "com.psg.startup.app",
+  "appName": "PSG Web2Mobile",
+  "webDir": "www",
+  "server": {
+    "androidScheme": "https"
+  }
+}
