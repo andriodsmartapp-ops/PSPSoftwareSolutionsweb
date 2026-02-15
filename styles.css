@@ -575,92 +575,227 @@ input:focus, textarea:focus{
 
 
 /* ============================= */
-/* Corporate 4-Side 3D Enhancements */
+/* Theme match + About section */
 /* ============================= */
 
-.migration__wrap {
-  border-radius: 28px;
-  box-shadow:
-    0 40px 120px rgba(0,0,0,.65),
-    0 0 60px rgba(103,208,255,.25);
+/* Make migration panel feel integrated (less exterior glow) */
+.migration__wrap{
+  box-shadow: 0 26px 86px rgba(0,0,0,.55);
+}
+.migration__glow{
+  opacity: .50;
+  filter: blur(8px);
 }
 
-/* 3D Side Panels */
-.migration__wrap::before,
-.migration__wrap::after {
-  content: "";
-  position: absolute;
-  inset: -6px;
-  border-radius: 32px;
-  z-index: -1;
-  background: linear-gradient(135deg, rgba(103,208,255,.35), rgba(138,125,255,.35), rgba(255,109,162,.25));
-  filter: blur(30px);
-  opacity: .6;
-  animation: glowPulse 6s ease-in-out infinite;
+/* About */
+.about{
+  padding: 28px 0 40px;
+  position:relative;
 }
-
-@keyframes glowPulse {
-  0%,100% { opacity: .55; }
-  50% { opacity: .85; }
-}
-
-/* Floating 3D Corners */
-.corner-3d {
-  position:absolute;
-  width:80px;
-  height:80px;
-  border-radius:20px;
-  background: linear-gradient(145deg, rgba(255,255,255,.18), rgba(255,255,255,.05));
-  border:1px solid rgba(255,255,255,.18);
-  backdrop-filter: blur(20px);
-  box-shadow: 0 20px 60px rgba(0,0,0,.55);
-  animation: floatCorner 8s ease-in-out infinite;
-}
-
-.corner-3d.top-left { top:-30px; left:-30px; }
-.corner-3d.top-right { top:-30px; right:-30px; animation-delay:1.5s; }
-.corner-3d.bottom-left { bottom:-30px; left:-30px; animation-delay:3s; }
-.corner-3d.bottom-right { bottom:-30px; right:-30px; animation-delay:4.5s; }
-
-@keyframes floatCorner {
-  0%,100% { transform: translateY(0px) rotate(0deg); }
-  50% { transform: translateY(-18px) rotate(8deg); }
-}
-
-/* Corporate section spacing */
-section {
-  padding-top: 60px;
-  padding-bottom: 60px;
-}
-
-/* Corporate typography upgrade */
-.hero__title {
-  font-weight: 800;
-  letter-spacing: .5px;
-}
-
-.sectionTitle {
-  font-weight: 700;
-  letter-spacing: .4px;
-  text-transform: uppercase;
-}
-
-/* Card refinement */
-.glassCard {
-  transition: transform .25s ease, box-shadow .25s ease;
-}
-.glassCard:hover {
-  box-shadow: 0 25px 80px rgba(0,0,0,.6);
-}
-
-/* Subtle divider lines */
-.ai::after,
-.contact::after {
+.about::before{
   content:"";
   position:absolute;
-  bottom:0;
-  left:0;
-  right:0;
+  left:0; right:0; top:0;
   height:1px;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,.2), transparent);
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.14), transparent);
+}
+
+.aboutGrid{
+  display:grid;
+  grid-template-columns: 1.1fr .9fr;
+  gap:14px;
+  margin-bottom: 14px;
+}
+.aboutCard{
+  padding: 18px;
+  border-radius: 22px;
+}
+.aboutCard h3{
+  margin: 0 0 10px;
+  font-size: 15px;
+  font-weight: 750;
+  letter-spacing:.2px;
+}
+.aboutCard p{
+  margin: 0;
+  color: rgba(255,255,255,.72);
+  font-size: 13px;
+  line-height: 1.65;
+}
+
+.aboutStats{
+  display:grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap:10px;
+  margin-top: 14px;
+}
+.stat{
+  padding: 12px;
+  border-radius: 16px;
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.12);
+}
+.stat__num{
+  font-size: 20px;
+  font-weight: 850;
+  letter-spacing:.2px;
+  background: linear-gradient(90deg, var(--accent), #b7f0ff, var(--accent2));
+  -webkit-background-clip:text;
+  background-clip:text;
+  color: transparent;
+}
+.stat__label{
+  margin-top: 4px;
+  font-size: 12px;
+  color: rgba(255,255,255,.70);
+}
+
+/* Steps */
+.steps{ margin-top: 6px; }
+.step{
+  display:flex;
+  gap:10px;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255,255,255,.08);
+}
+.step:last-child{ border-bottom:0; }
+.step__dot{
+  width:10px;height:10px;
+  border-radius:999px;
+  margin-top: 6px;
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+  box-shadow: 0 0 18px rgba(103,208,255,.35);
+  flex: 0 0 auto;
+}
+.step__title{
+  font-weight: 750;
+  font-size: 13px;
+}
+.step__text{
+  margin-top: 3px;
+  font-size: 12.5px;
+  color: rgba(255,255,255,.70);
+}
+
+/* Org chart */
+.orgWrap{
+  padding: 18px;
+  border-radius: 22px;
+}
+.orgHeader{
+  text-align:center;
+  margin-bottom: 14px;
+}
+.orgHeader h3{
+  margin: 0 0 6px;
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing:.25px;
+}
+.orgHeader p{
+  margin: 0;
+  font-size: 12.6px;
+  color: rgba(255,255,255,.70);
+}
+
+.orgNode{
+  padding: 12px 12px;
+  border-radius: 18px;
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.12);
+  text-align:center;
+}
+.orgNode--root{
+  max-width: 520px;
+  margin: 0 auto 12px;
+  background: rgba(103,208,255,.10);
+  border-color: rgba(103,208,255,.18);
+}
+.orgNode__title{
+  font-weight: 800;
+  font-size: 13px;
+}
+.orgNode__sub{
+  margin-top: 4px;
+  font-size: 12px;
+  color: rgba(255,255,255,.70);
+}
+
+.orgRow{
+  display:grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap:10px;
+}
+.orgFooter{
+  display:flex;
+  flex-wrap: wrap;
+  justify-content:center;
+  gap:10px;
+  margin-top: 14px;
+}
+.pillTag{
+  padding: 8px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  background: rgba(10,12,40,.35);
+  border: 1px solid rgba(255,255,255,.12);
+  color: rgba(255,255,255,.80);
+}
+
+/* Responsive */
+@media (max-width: 900px){
+  .aboutGrid{ grid-template-columns: 1fr; }
+  .orgRow{ grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 520px){
+  .aboutStats{ grid-template-columns: 1fr; }
+  .orgRow{ grid-template-columns: 1fr; }
+}
+
+
+/* ============================= */
+/* Visual Refinement & Theme Fix */
+/* ============================= */
+
+/* Fix left-side color mismatch around migration image */
+.migration{
+  background: radial-gradient(600px 400px at 30% 60%, rgba(103,208,255,.12), transparent 70%);
+  border-radius: 28px;
+  padding: 20px 0;
+}
+
+/* Smooth blend around image */
+.migration__media img{
+  border-radius: 24px;
+  box-shadow:
+    0 20px 70px rgba(0,0,0,.6),
+    0 0 40px rgba(103,208,255,.15);
+}
+
+/* Make About content more readable */
+.aboutCard p{
+  font-size: 12.8px;
+  line-height: 1.75;
+}
+
+/* Corporate polish spacing */
+.sectionTitle{
+  letter-spacing: .6px;
+}
+
+.aboutCard{
+  background: linear-gradient(180deg, rgba(255,255,255,.09), rgba(255,255,255,.05));
+}
+
+/* Subtle glow alignment */
+.hero{
+  position:relative;
+}
+.hero::before{
+  content:"";
+  position:absolute;
+  left:0; right:0; bottom:-20px;
+  height:1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.18), transparent);
 }
